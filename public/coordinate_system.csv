@@ -1,0 +1,4 @@
+"1","Geodetik","lat, lon, h"
+"2","Geosentrik","X, Y, Z"
+"3","Universal Transverse Mercator (UTM)","easting, northing, z(any)"
+"4","Mercator","x, y, z(any)"

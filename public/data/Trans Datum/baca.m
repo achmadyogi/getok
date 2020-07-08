@@ -1,0 +1,10 @@
+clc;
+fid=fopen('91LK_sekutu.txt');
+header = textscan(fid,'%s%s%s%s%s',1);
+C = textscan(fid,'%s%s%s%s%s');
+titik=C{1};
+xlama=C{2};
+	ylama=C{3};
+	Xbaru=C{4};
+	Ybaru=C{5};
+fclose(fid);
