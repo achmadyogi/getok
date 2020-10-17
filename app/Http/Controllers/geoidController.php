@@ -35,13 +35,13 @@ class geoidController extends Controller
         $uploadFile = $request->file('file');
         $path = $uploadFile->store('public/geoid_file');
 
-        if(Transaction::max('id_transaksi') == NULL){
+        if(Transaction::max('id_transaction') == NULL){
             $id = 1;
         }else{
-            $id = Transaction::max('id_transaksi') + 1;
+            $id = Transaction::max('id_transaction') + 1;
         }
         $d = new Transaction();
-        $d->id_transaksi = $id;
+        $d->id_transaction = $id;
         $d->id_app = 3;
         $d->is_active = 1;
         $d->file = $path;
@@ -56,7 +56,7 @@ class geoidController extends Controller
         Session::flash('init', true);
         Session::flash('prog', 'Reading data...');
         Session::flash('bar', 0);
-        Session::flash('id_transaksi', $id);
+        Session::flash('id_transaction', $id);
         Session::flash('lines', $amount);
         Session::flash('file', $file);
         return redirect()->back();
@@ -64,10 +64,10 @@ class geoidController extends Controller
 
     public function calcGeoid(Request $request){
         // Reading data
-        $read = fopen("../storage/app/".Transaction::find($request->id_transaksi)->file, "r");
+        $read = fopen("../storage/app/".Transaction::find($request->id_transaction)->file, "r");
 
         if($request->awal == 1){
-            $write = fopen("../storage/app/public/geoid_result/id_".$request->id_transaksi.".txt", "w");
+            $write = fopen("../storage/app/public/geoid_result/id_".$request->id_transaction.".txt", "w");
             $header =  "=========================================================================================\n";
             $header .= "                                 GEOID UNDULATION VALUES                                 \n";
             $header .= "=========================================================================================\n\n";
@@ -79,7 +79,7 @@ class geoidController extends Controller
             fclose($write);
         }
 
-        $write = fopen("../storage/app/public/geoid_result/id_".$request->id_transaksi.".txt", "a");
+        $write = fopen("../storage/app/public/geoid_result/id_".$request->id_transaction.".txt", "a");
 
         // transformation and create new file;
         $c = 1; $b = 1;

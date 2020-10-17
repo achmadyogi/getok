@@ -69,12 +69,12 @@
                 'cat': <?php echo session('cat'); ?>,
                 'stat': <?php echo session('stat'); ?>,
                 'delimiter': <?php echo session('delimiter'); ?>,
-                'id_transaksi': <?php echo session('id_transaksi'); ?>,
+                'id_transaction': <?php echo session('id_transaction'); ?>,
                 'lines': <?php echo session('lines'); ?>,
                 '_token':$('input[name=_token]').val()
             }, function(data, status){
                 $("#result").html("<p>Message:"+ data['message'] +"<br>Download hasil transformasi disini. <br> " +
-                    "<a href=\'../storage/app/public/transformasi_datum/id_{{session('id_transaksi')}}.txt\' " +
+                    "<a href=\'../storage/app/public/transformasi_datum/id_{{session('id_transaction')}}.txt\' " +
                         "style='text-decoration: none; color:white' download>" +
                     "<button type='button' class='button-default'>Unduh</button></a> </p>");
             });

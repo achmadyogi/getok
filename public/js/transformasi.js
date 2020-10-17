@@ -110,3 +110,13 @@ function utm2gd(easting, northing, h, zone, hemi){
 
 	return sys;
 }
+
+function merc2gd(easting, northing, h, meridian_central) {
+
+    lat = rad2deg(Math.atan(Math.sinh(northing/a())));
+    lon = rad2deg(easting/a()) + meridian_central;
+
+    sys = {"lat": lat,"lon": lon,"h": h};
+
+    return sys;
+}

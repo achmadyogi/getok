@@ -130,13 +130,13 @@ class transformasiDatumController extends Controller
         $uploadFile = $request->file('file');
         $path = $uploadFile->store('public/transformasi_datum');
 
-        if(Transaction::max('id_transaksi') == NULL){
+        if(Transaction::max('id_transaction') == NULL){
             $id = 1;
         }else{
-            $id = Transaction::max('id_transaksi') + 1;
+            $id = Transaction::max('id_transaction') + 1;
         }
         $d = new Transaction();
-        $d->id_transaksi = $id;
+        $d->id_transaction = $id;
         $d->id_app = 5;
         $d->is_active = 1;
         $d->file = $path;
@@ -149,7 +149,7 @@ class transformasiDatumController extends Controller
         Session::flash('cat', $request->cat);
         Session::flash('stat', $request->stat);
         Session::flash('delimiter', $request->delimiter);
-        Session::flash('id_transaksi', $id);
+        Session::flash('id_transaction', $id);
         Session::flash('init', true);
         Session::flash('lines', $request->lines);
         Session::flash('dx', $request->dx);
@@ -167,10 +167,10 @@ class transformasiDatumController extends Controller
         $baru = [];
 
         // Reading data
-        $read = fopen("../storage/app/".Transaction::find($request->id_transaksi)->file, "r");
+        $read = fopen("../storage/app/".Transaction::find($request->id_transaction)->file, "r");
 
         // Writing header
-        $write = fopen("../storage/app/public/transformasi_datum_result/id_".$request->id_transaksi.".txt", "w");
+        $write = fopen("../storage/app/public/transformasi_datum_result/id_".$request->id_transaction.".txt", "w");
         $header =  "=========================================================================================\n";
         $header .= "                                   TRANSFORMASI DATUM                                    \n";
         $header .= "=========================================================================================\n\n";

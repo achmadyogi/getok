@@ -50,7 +50,7 @@
     #grad{
         height: 10px;
         width: 100%;
-        background-image: linear-gradient(to right, #234ecf, #29d946, yellow, red); 
+        background-image: linear-gradient(to right, #234ecf, #29d946, yellow, red);
     }
 </style>
 <div id="mapid"></div>
@@ -132,7 +132,7 @@
             $.get('{{ route("calc-geoid") }}',{
                 'format': <?php echo session('format'); ?>,
                 'delimiter': <?php echo session('delimiter'); ?>,
-                'id_transaksi': <?php echo session('id_transaksi'); ?>,
+                'id_transaction': <?php echo session('id_transaction'); ?>,
                 'lines': lines,
                 'awal': awal,
                 'akhir': akhir,
@@ -154,7 +154,7 @@
             if(bar >= 100){
                 setTimeout(function(){
                     $("#iffine").html("<h4><b>Data selesai dibuat</b></h4>\
-                        <p>Download hasil transformasi disini. <br> <a href=\'../storage/app/public/geoid_result/id_{{session('id_transaksi')}}.txt\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p><hr><p style='text-align: center'><button type=\"button\" class=\"button-default\" onclick=\"cancelMe()\">Selesai</button></p>");
+                        <p>Download hasil transformasi disini. <br> <a href=\'../storage/app/public/geoid_result/id_{{session('id_transaction')}}.txt\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p><hr><p style='text-align: center'><button type=\"button\" class=\"button-default\" onclick=\"cancelMe()\">Selesai</button></p>");
                 }, 1000);
             }
         }
@@ -219,11 +219,11 @@
       layers: [grup, heatmapLayer],
     }).setView([-1.978455, 114.855697], 6);
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoiYWNobWFkeW9naSIsImEiOiJjamdxZHlobmQwdXU0MzFsa2t3Z2k4dmV3In0.K2Ri-W53I7_etKnOo5Fy0Q'
+        id: 'mapbox/streets-v11',
+        accessToken: 'pk.eyJ1IjoiYWNobWFkeW9naSIsImEiOiJja2dkMnR0a2swdGVmMnlxYXA2eXNnbXNxIn0.zRgg5AZXShJtOq-daasDNA'
     }).addTo(mymap);
 
     heatmapLayer.setData(data);
@@ -266,7 +266,7 @@
         var lon = $('#lon').val();
 
         mymap.removeLayer(marker);
-        
+
         $.ajax({
             url:"{{ route('geoid-per-point') }}",
             method:"GET",
@@ -287,7 +287,7 @@
                 document.getElementById('N').value = data['N'];
             }
         });
-            
+
     });
 
     $('#lon').keyup(function(){
@@ -295,7 +295,7 @@
         var lon = $(this).val();
 
         mymap.removeLayer(marker);
-        
+
         $.ajax({
             url:"{{ route('geoid-per-point') }}",
             method:"GET",

@@ -19,7 +19,7 @@ class HomeController extends Controller
         for($i=0; $i<346802; $i++){
             $line = fgets($read);
             $val = explode(",", preg_split('/\s+/', $line)[0]);
-            if($i>=343600 && sizeof($val) >= 3){
+            if($i>=346800 && sizeof($val) >= 3){
                 if(Geoid::where(['id'=>$val[0]])->count() == 0){
                     $ha = new Geoid();
                     $ha->id = $val[0];

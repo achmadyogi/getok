@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\AbridgeMolodensky;
 use App\Bursawolfs;
 use App\CoordinateSystem;
 use App\Datum;
@@ -201,7 +200,7 @@ class transformasiController extends Controller
 
     public function banyakTitik(){
         $data = Apps::find(1);
-        $system = System::all();
+        $system = CoordinateSystem::all();
         $datum = Datum::all();
         return view('apps.transformasi_banyak_titik', ['data' => $data, 'system' => $system, 'datum' => $datum]);
     }
@@ -211,13 +210,13 @@ class transformasiController extends Controller
         $uploadFile = $request->file('file');
         $path = $uploadFile->store('public/transformasi');
 
-        if(Transaction::max('id_transaksi') == NULL){
+        if(Transaction::max('id_transaction') == NULL){
             $id = 1;
         }else{
-            $id = Transaction::max('id_transaksi') + 1;
+            $id = Transaction::max('id_transaction') + 1;
         }
         $d = new Transaction();
-        $d->id_transaksi = $id;
+        $d->id_transaction = $id;
         $d->id_app = 1;
         $d->is_active = 1;
         $d->file = $path;
@@ -237,7 +236,7 @@ class transformasiController extends Controller
         Session::flash('init', true);
         Session::flash('prog', 'Reading data...');
         Session::flash('bar', 0);
-        Session::flash('id_transaksi', $id);
+        Session::flash('id_transaction', $id);
         Session::flash('lines', $amount);
         Session::flash('file', $file);
         Session::flash('lon_init', $request->lon_init);
@@ -247,10 +246,10 @@ class transformasiController extends Controller
 
     public function calcTrans(Request $request){
         // Reading data
-        $read = fopen("../storage/app/".Transaction::find($request->id_transaksi)->file, "r");
+        $read = fopen("../storage/app/".Transaction::find($request->id_transaction)->file, "r");
 
         if($request->awal == 1){
-            $write = fopen("../storage/app/public/convert_result/id_".$request->id_transaksi.".txt", "w");
+            $write = fopen("../storage/app/public/convert_result/id_".$request->id_transaction.".txt", "w");
             $header =  "=========================================================================================\n";
             $header .= "                                  TRANFORMASI KOORDINAT                                  \n";
             $header .= "=========================================================================================\n\n";
@@ -294,10 +293,16 @@ class transformasiController extends Controller
             fclose($write);
         }
 
-        $write = fopen("../storage/app/public/convert_result/id_".$request->id_transaksi.".txt", "a");
+        $write = fopen("../storage/app/public/convert_result/id_".$request->id_transaction.".txt", "a");
 
         // transformation and create new file;
         $b = 1;
+
+        // Get datum properties
+        $epParams = Datum::find($request->id_datum)->ellipsoid;
+        $ellipsoid = new Ellipsoid($epParams->id_ellipsoid, $epParams->a, $epParams->b,
+            $epParams->f, $epParams->ellipsoid_name, $epParams->year);
+        $prj = new MapProjection($ellipsoid);
 
         while($b < $request->akhir) {
             if($b>=$request->awal){
@@ -320,76 +325,53 @@ class transformasiController extends Controller
                     }
                     if(is_numeric($val[$c+1]) && is_numeric($val[$c+2])) {
                         if(isset($val[$c+3])){
-                            $val[$c+3] = (is_numeric($val[$c+3])) ? $val[$c] : 0;
+                            $val[$c+3] = (is_numeric($val[$c+3])) ? $val[$c+3] : 0;
+                        } else {
+                            $val[$c+3] = 0;
                         }
-                        $gd = new Geodetic($request->id_datum);
                         switch ($request->structure) {
                             case 1: // id lat lon h
-                                if (isset($val[$c + 3])) {
-                                    $h = $val[$c + 3];
-                                } else {
-                                    $h = 0;
-                                }
-                                $gd->setCoordinateWithId($val[$c], $val[$c + 1], $val[$c + 2], $h);
+                                $gd = new Geodetic($val[$c + 1], $val[$c + 2], $val[$c+3], $val[$c]);
                                 break;
 
                             case 2: // id lon lat h
-                                if (isset($val[$c + 3])) {
-                                    $h = $val[$c + 3];
-                                } else {
-                                    $h = 0;
-                                }
-                                $gd->setCoordinateWithId($val[$c], $val[$c + 2], $val[$c + 1], $h);
+                                $gd = new Geodetic($val[$c + 2], $val[$c + 1], $val[$c+3], $val[$c]);
                                 break;
 
-                            case 3: // id lat lon
-                                $gd->setCoordinateWithId($val[$c], $val[$c + 1], $val[$c + 2], 0);
+                            case 3: // id X Y Z
+                                $gs = new Geocentric($val[$c + 1], $val[$c + 2], $val[$c + 3], $val[$c]);
+                                $gd = $prj->gs2gd($gs);
                                 break;
 
-                            case 4: // id lon lat
-                                $gd->setCoordinateWithId($val[$c], $val[$c + 2], $val[$c + 1], 0);
+                            case 4: // id Y X Z
+                                $gs = new Geocentric($val[$c + 2], $val[$c + 1], $val[$c + 3], $val[$c]);
+                                $gd = $prj->gs2gd($gs);
                                 break;
 
-                            case 5: // id X Y Z
-                                $init = new Geocentric($request->id_datum);
-                                $init->setCoordinateWithId($val[$c], $val[$c + 1], $val[$c + 2], $val[$c + 3]);
-                                $gd = MapProjection::gs2gd($init);
+                            case 5: // UTM: id easting northing h
+                                $utm = new UTM($val[$c + 1], $val[$c + 2], $val[$c + 3], $request->zone, $request->hemi, $val[$c]);
+                                $gd = $prj->utm2gd($utm);
                                 break;
 
-                            case 6: // id Y X Z
-                                $init = new Geocentric($request->id_datum);
-                                $init->setCoordinateWithId($val[$c], $val[$c + 2], $val[$c + 1], $val[$c + 3]);
-                                $gd = MapProjection::gs2gd($init);
+                            case 6: // UTM: id northing easting h
+                                $utm = new UTM($val[$c + 2], $val[$c + 1], $val[$c + 3], $request->zone, $request->hemi, $val[$c]);
+                                $gd = $prj->utm2gd($utm);
                                 break;
 
-                            case 7: // id easting northing h
-                                $init = new UTM($request->id_datum);
-                                $init->setCoordinateWithId($val[$c], $val[$c + 1], $val[$c + 2], $val[$c + 3], $request->zone, $request->hemi);
-                                $gd = MapProjection::utm2gd($init);
+                            case 7: // Mercator: id easting northing
+                                $merc = new Mercator($val[$c + 1], $val[$c + 2], $val[$c + 3], $request->lon_init, $val[$c]);
+                                $gd = $prj->merc2gd($merc);
                                 break;
 
-                            case 8: // id northing easting h
-                                $init = new UTM($request->id_datum);
-                                $init->setCoordinateWithId($val[$c], $val[$c + 2], $val[$c + 1], $val[$c + 3], $request->zone, $request->hemi);
-                                $gd = MapProjection::utm2gd($init);
-                                break;
-
-                            case 9: // id easting northing
-                                $init = new UTM($request->id_datum);
-                                $init->setCoordinateWithId($val[$c], $val[$c + 1], $val[$c + 2], 0, $request->zone, $request->hemi);
-                                $gd = MapProjection::utm2gd($init);
-                                break;
-
-                            case 10: // id northing easting
-                                $init = new UTM($request->id_datum);
-                                $init->setCoordinateWithId($val[$c], $val[$c + 2], $val[$c + 1], 0, $request->zone, $request->hemi);
-                                $gd = MapProjection::utm2gd($init);
+                            case 8: // Mercator: id northing easting
+                                $merc = new Mercator($val[$c + 2], $val[$c + 1], $val[$c + 3], $request->lon_init, $val[$c]);
+                                $gd = $prj->merc2gd($merc);
                                 break;
 
                         }
                         switch ($request->sys_out) {
                             case 1: // Geodetik
-                                $json = json_decode($gd->toJsonString(), false);
+                                $json = $gd->toJsonObject();
                                 $lat = ($json->lat >= 0 ) ? " ".$json->lat : $json->lat;
                                 $lon = ($json->lon > 0 ) ? " ".$json->lon : $json->lon;
                                 $h = ($json->h > 0 ) ? " ".$json->h : $json->h;
@@ -398,7 +380,7 @@ class transformasiController extends Controller
                                 break;
 
                             case 2: // Geosentrik
-                                $json = json_decode(MapProjection::gd2gs($gd)->toJsonString(),false);
+                                $json = $prj->gd2gs($gd)->toJsonObject();
                                 $X = ($json->X > 0 ) ? " ".$json->X : $json->X;
                                 $Y = ($json->Y > 0 ) ? " ".$json->Y : $json->Y;
                                 $Z = ($json->Z > 0 ) ? " ".$json->Z : $json->Z;
@@ -407,7 +389,7 @@ class transformasiController extends Controller
                                 break;
 
                             case 3: // UTM
-                                $json = json_decode(MapProjection::gd2utm($gd)->toJsonString(), false);
+                                $json = $prj->gd2utm($gd)->toJsonObject();
                                 $x = ($json->x > 0 ) ? " ".$json->x : $json->x;
                                 $y = ($json->y > 0 ) ? " ".$json->y : $json->y;
                                 $z = ($json->h > 0 ) ? " ".$json->h : $json->h;
@@ -416,7 +398,7 @@ class transformasiController extends Controller
                                 break;
 
                             case 4: // Mercator
-                                $json = json_decode(MapProjection::gd2merc($gd, $request->lon_init)->toJsonString(), false);
+                                $json = $prj->gd2merc($gd, $request->lon_init)->toJsonObject();
                                 $x = ($json->x > 0 ) ? " ".$json->x : $json->x;
                                 $y = ($json->y > 0 ) ? " ".$json->y : $json->y;
                                 $z = ($json->h > 0 ) ? " ".$json->h : $json->h;

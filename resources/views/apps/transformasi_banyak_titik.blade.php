@@ -93,7 +93,7 @@
                         'delimiter': <?php echo session('delimiter'); ?>,
                         'hemi': "<?php echo session('hemi'); ?>",
                         'zone': "<?php echo session('zone'); ?>",
-                        'id_transaksi': <?php echo session('id_transaksi'); ?>,
+                        'id_transaction': <?php echo session('id_transaction'); ?>,
                         'lines': lines,
                         'awal': awal,
                         'akhir': akhir,
@@ -113,7 +113,7 @@
                         'sys_out': <?php echo session('sys_out'); ?>,
                         'structure': <?php echo session('structure'); ?>,
                         'delimiter': <?php echo session('delimiter'); ?>,
-                        'id_transaksi': <?php echo session('id_transaksi'); ?>,
+                        'id_transaction': <?php echo session('id_transaction'); ?>,
                         'lines': lines,
                         'awal': awal,
                         'akhir': akhir,
@@ -138,7 +138,7 @@
             if(bar >= 100){
                 setTimeout(function(){
                     $("#wait").css("display", "none");
-                    $("#result").html("<p>Download hasil transformasi disini. <br> <a href=\'../storage/app/public/convert_result/id_{{session('id_transaksi')}}.txt\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p>");
+                    $("#result").html("<p>Download hasil transformasi disini. <br> <a href=\'../storage/app/public/convert_result/id_{{session('id_transaction')}}.txt\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p>");
                 }, 1000);
             }
         }
@@ -178,11 +178,11 @@ $(document).ready(function(){
     }).setView([-1.978455, 114.855697], 5);
     mymap.addLayer(grup);
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
-        id: 'mapbox.streets',
-        accessToken: 'pk.eyJ1IjoiYWNobWFkeW9naSIsImEiOiJjamdxZHlobmQwdXU0MzFsa2t3Z2k4dmV3In0.K2Ri-W53I7_etKnOo5Fy0Q'
+        id: 'mapbox/streets-v11',
+        accessToken: 'pk.eyJ1IjoiYWNobWFkeW9naSIsImEiOiJja2dkMnR0a2swdGVmMnlxYXA2eXNnbXNxIn0.zRgg5AZXShJtOq-daasDNA'
     }).addTo(mymap);
 
     var marker;

@@ -25,18 +25,17 @@
         <label>Structure Data</label><br>
         <select name="structure" id="structure" class="input" required>
         	@if($sys_in == 1)
-            <option value="1">index lat lon height</option>
-            <option value="2">index lon lat height</option>
-            <option value="3">index lat lon</option>
-            <option value="4">index lon lat</option>
+                <option value="1">index lat lon height</option>
+                <option value="2">index lon lat height</option>
             @elseif($sys_in == 2)
-            <option value="5">index X Y Z</option>
-            <option value="6">index Y X Z</option>
-            @else
-            <option value="7">index easting northing height</option>
-            <option value="8">index northing easting height</option>
-            <option value="9">index easting northing</option>
-            <option value="10">index northing easting</option>
+                <option value="3">index X Y Z</option>
+                <option value="4">index Y X Z</option>
+            @elseif($sys_in == 3)
+                <option value="5">index easting northing height</option>
+                <option value="6">index northing easting height</option>
+            @elseif($sys_in == 4)
+                <option value="7">index easting northing height</option>
+                <option value="8">index northing easting height</option>
             @endif
         </select>
     </div>
@@ -50,19 +49,19 @@
     </div>
 </div><br>
 <input type="hidden" value="" id="lines" name="lines">
-	@if($sys_out == 4)
+	@if($sys_in == 4 || $sys_out == 4)
 		<div class="row">
 			<div class="col-md-6">
 				<label>Mercator Meridian Central</label><br>
-				<input type="number" name="lon_init" step="any" class="input" value="0" placeholder="default: 0" required><br><br>
+				<input type="number" id="lon_init" name="lon_init" step="any" class="input" value="0" placeholder="default: 0" required><br><br>
 			</div>
 		</div>
 	@else
-		<input type="hidden" name="lon_init" value="0">
+		<input type="hidden" id="lon_init" name="lon_init" value="0">
 	@endif
 
 <label>Upload File</label><br>
-<input type="file" name="file" id="excelfile">
+<input type="file" name="file" id="excelfile" required>
 <button type="submit" class="button-default">Calculate</button><br>
 <small><i>Akan ditampilkan sampel data Anda hingga 1000 data.</i></small>
 <script type="text/javascript">
@@ -110,23 +109,29 @@
 				    			myobj = lines[i].split(';');
 				    		}
 				    		if(myobj.length >= 3){
-					    		if(format == 1 || format == 3){
+					    		if(format == 1){
 					    			plotme(myobj[c+1],myobj[c+2]);
-					    		}else if(format == 2 || format == 4){
+					    		}else if(format == 2){
 					    			plotme(myobj[c+2],myobj[c+1]);
-					    		}else if(format == 5){
+					    		}else if(format == 3){
 					    			var xyz = gs2gd(myobj[c+1], myobj[c+2], myobj[c+3]);
 					    			plotme(xyz.lat, xyz.lon);
-					    		}else if(format == 6){
+					    		}else if(format == 4){
 					    			var xyz = gs2gd(myobj[c+2], myobj[c+1], myobj[c+3]);
 					    			plotme(xyz.lat, xyz.lon);
-					    		}else if(format == 7 || format == 9){
+					    		}else if(format == 5){
 					    			var utm = utm2gd(myobj[c+1], myobj[c+2], 0, document.getElementById("zone").value, document.getElementById("hemi").value);
 					    			plotme(utm.lat, utm.lon);
-					    		}else if(format == 8 || format == 10){
+					    		}else if(format == 6){
 					    			var utm = utm2gd(myobj[c+2], myobj[c+1], 0, document.getElementById("zone").value, document.getElementById("hemi").value);
 					    			plotme(utm.lat, utm.lon);
-					    		}
+					    		}else if(format == 7){
+                                    var merc = merc2gd(myobj[c+1], myobj[c+2], 0, document.getElementById("lon_init").value);
+                                    plotme(merc.lat, merc.lon);
+                                }else if(format == 8){
+                                    var merc = merc2gd(myobj[c+2], myobj[c+1], 0, document.getElementById("lon_init").value);
+                                    plotme(merc.lat, merc.lon);
+                                }
 					    	}
 				    	}
 			    	}
