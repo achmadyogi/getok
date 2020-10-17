@@ -16,6 +16,13 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('index');
 
 /*
+GNSS
+*/
+Route::get('/gnss','GNSSController@index');
+Route::get('/get_rnx','GNSSController@get_rnx')->name('get_rnx');
+Route::post('/get_rnx','GNSSController@upload')->name('get_rnx');
+
+/*
 |--------------------------------------------------------------------------
 | Dashboard
 |--------------------------------------------------------------------------
