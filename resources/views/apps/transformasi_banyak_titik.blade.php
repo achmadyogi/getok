@@ -137,8 +137,8 @@
 
             if(bar >= 100){
                 setTimeout(function(){
+                    $("#result").html("<p>Download hasil transformasi disini. <br> <a href=\'" + "{{asset("storage/convert_result/id_".session('id_transaction').".txt")}}" + "\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p>");
                     $("#wait").css("display", "none");
-                    $("#result").html("<p>Download hasil transformasi disini. <br> <a href=\'../storage/app/public/convert_result/id_{{session('id_transaction')}}.txt\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p>");
                 }, 1000);
             }
         }
