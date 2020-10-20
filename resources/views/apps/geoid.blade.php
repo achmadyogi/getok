@@ -154,7 +154,7 @@
             if(bar >= 100){
                 setTimeout(function(){
                     $("#iffine").html("<h4><b>Data selesai dibuat</b></h4>\
-                        <p>Download hasil transformasi disini. <br> <a href=\'../storage/app/public/geoid_result/id_{{session('id_transaction')}}.txt\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p><hr><p style='text-align: center'><button type=\"button\" class=\"button-default\" onclick=\"cancelMe()\">Selesai</button></p>");
+                        <p>Download hasil transformasi disini. <br> <a href=\'" + "{{asset("storage/geoid_result/id_".session('id_transaction').".txt")}}" + "\' style='text-decoration: none; color:white' download><button type='button' class='button-default'>Unduh</button></a> </p><hr><p style='text-align: center'><button type=\"button\" class=\"button-default\" onclick=\"cancelMe()\">Selesai</button></p>");
                 }, 1000);
             }
         }
