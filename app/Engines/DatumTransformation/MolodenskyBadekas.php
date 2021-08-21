@@ -836,8 +836,6 @@ namespace App\Engines\DatumTransformation {
             $variance = $v->transpose()->multiply($Q->inverse())->multiply($v)->scalarDivide($dof);
             $Qvv = $Q->multiply($A->transpose())->multiply($Wε)->multiply(MatrixFactory::identity(sizeof($ds1)*3)->subtract($B->multiply($N->inverse())->multiply($B->transpose())->multiply($Wε)))->multiply($A)->multiply($Q);
             $tStudent = StatisticTest::TStudent("0.05", $dof);
-            echo $tStudent."<br>";
-            echo $dof."<br>";
             $tau = ($tStudent*sqrt($dof))/(sqrt($dof-1+pow($tStudent,2)));
             for ($i = 0; $i<$v->getM(); $i++){
                 $final = $v[$i][0]/$Qvv[$i][$i];
@@ -847,12 +845,11 @@ namespace App\Engines\DatumTransformation {
                 }else{
                     $result[$i] = 1;
                 }
-                //echo abs($final)/sqrt($variance[0][0])." vs ".$tau."<br>";
             }
 
             $hit = 0;
             for ($i=0; $i<sizeof($result)/6; $i++){
-                if($result[$i+$hit] == 1 && $result[$i+$hit+1] == 1 && $result[$i+$hit+2] == 1){
+                if($result[$hit] == 1 && $result[$hit+1] == 1 && $result[$hit+2] == 1){
                     $resultTest[$i] = 1;
                 }else{
                     $resultTest[$i] = 0;

@@ -170,11 +170,11 @@
         }).setView([-1.978455, 114.855697], 5);
         mymap.addLayer(grup);
 
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 18,
-            id: 'mapbox.streets',
-            accessToken: 'pk.eyJ1IjoiYWNobWFkeW9naSIsImEiOiJjamdxZHlobmQwdXU0MzFsa2t3Z2k4dmV3In0.K2Ri-W53I7_etKnOo5Fy0Q'
+            id: 'mapbox/streets-v11',
+            accessToken: 'pk.eyJ1IjoiYWNobWFkeW9naSIsImEiOiJja2dkMnR0a2swdGVmMnlxYXA2eXNnbXNxIn0.zRgg5AZXShJtOq-daasDNA'
         }).addTo(mymap);
 
         var marker;

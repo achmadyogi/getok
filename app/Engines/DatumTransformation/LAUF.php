@@ -45,13 +45,13 @@ class LAUF
             $sigma = ($V->transpose()->multiply($V))->scalarDivide(2*count($dataSet1)-6);
             $rms = sqrt($sigma);
         } catch (BadDataException $e) {
-            echo "There is a problem with matrix equation: "+$e;
+            echo "There is a problem with matrix equation: ".$e;
         } catch (IncorrectTypeException $e) {
-            echo "There is a problem with matrix equation: "+$e;
+            echo "There is a problem with matrix equation: ".$e;
         } catch (MatrixException $e) {
-            echo "There is a problem with matrix equation: "+$e;
+            echo "There is a problem with matrix equation: ".$e;
         } catch (MathException $e) {
-            echo "There is a problem with matrix equation: "+$e;
+            echo "There is a problem with matrix equation: ".$e;
         }
 
         return array(

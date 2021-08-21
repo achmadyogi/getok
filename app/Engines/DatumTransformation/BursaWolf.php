@@ -741,13 +741,11 @@ namespace App\Engines\DatumTransformation {
                 }else{
                     $result[$i] = 1;
                 }
-                //echo abs($final)/sqrt($variance[0][0])." vs ".$tau."<br>";
             }
-            echo print($Q);
 
             $hit = 0;
             for ($i=0; $i<sizeof($result)/6; $i++){
-                if($result[$i+$hit] == 1 && $result[$i+$hit+1] == 1 && $result[$i+$hit+2] == 1){
+                if($result[$hit] == 1 && $result[$hit+1] == 1 && $result[$hit+2] == 1){
                     $resultTest[$i] = 1;
                 }else{
                     $resultTest[$i] = 0;

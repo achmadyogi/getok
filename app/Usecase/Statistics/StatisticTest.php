@@ -65,8 +65,7 @@ class StatisticTest {
                 }
                 break;
             default:
-                throw new ConfidenceLevelException("Index not found for confidence level "+$alpha+". Use other values instead.");
-                break;
+                throw new ConfidenceLevelException("Index not found for confidence level " . $alpha . ". Use other values instead.");
         }
         return $result;
     }
